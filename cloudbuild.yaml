@@ -7,7 +7,9 @@ steps:
         npm install
         npm run build
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/helloworld-nodejs', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/helloworld-nodejs:$COMMIT_SHA', '.']
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/helloworld-nodejs']
+    args: ['push', 'gcr.io/$PROJECT_ID/helloworld-nodejs:$COMMIT_SHA']
 
+substitutions:
+  _COMMIT_SHA: $SHORT_SHA
