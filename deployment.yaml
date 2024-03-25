@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: my-container
-          image: gcr.io/arbitragescan/helloworld-nodejs
+          image: gcr.io/arbitragescan/helloworld-nodejs:test
           ports:
             - containerPort: 8080
