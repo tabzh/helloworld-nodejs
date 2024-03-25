@@ -14,9 +14,9 @@ steps:
     args:
       - run
       - --filename=deployment.yaml
+      - --image=gcr.io/$PROJECT_ID/helloworld-nodejs:$COMMIT_SHA
       - --location=us-central1
       - --cluster=eigenphi-us-central-1
-
 substitutions:
   _COMMIT_SHA: $SHORT_SHA
 
