@@ -6,17 +6,30 @@ steps:
       - |
         npm install
         npm run build
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/helloworld-nodejs:$COMMIT_SHA', '.']
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/helloworld-nodejs:$COMMIT_SHA']
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA", "."]
+    # push container image
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA"]
+    # deploy container image to GKE
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
       - run
       - --filename=deployment.yaml
-      - --image=gcr.io/$PROJECT_ID/helloworld-nodejs:$COMMIT_SHA
+      - --image=gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA
       - --location=us-central1
       - --cluster=eigenphi-us-central-1
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args: ['build', '-t', 'gcr.io/$PROJECT_ID/helloworld-nodejs:$COMMIT_SHA', '.']
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args: ['push', 'gcr.io/$PROJECT_ID/helloworld-nodejs:$COMMIT_SHA']
+#  - name: "gcr.io/cloud-builders/gke-deploy"
+#    args:
+#      - run
+#      - --filename=deployment.yaml
+#      - --image=gcr.io/$PROJECT_ID/helloworld-nodejs:$COMMIT_SHA
+#      - --location=us-central1
+#      - --cluster=eigenphi-us-central-1
 substitutions:
   _COMMIT_SHA: $SHORT_SHA
 
