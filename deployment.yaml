@@ -15,5 +15,6 @@ spec:
     spec:
       containers:
         - name: my-container
+          image: "gcr.io/arbitragescan/helloworld-nodejs:$(COMMIT_SHA)"
           ports:
             - containerPort: 8080
