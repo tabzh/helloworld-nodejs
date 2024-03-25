@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
         - name: my-container
-          image: gcr.io/arbitragescan/fake-app
+          image: gcr.io/arbitragescan/fake-app:lastest
           ports:
             - containerPort: 8080
