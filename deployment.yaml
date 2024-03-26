@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: helloworld-nodejs
-          image: gcr.io/arbitragescan/fake-app
+          image: gcr.io/arbitragescan/helloworld-nodejs
           ports:
             - containerPort: 8080
           livenessProbe:
