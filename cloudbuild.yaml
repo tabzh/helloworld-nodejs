@@ -7,10 +7,10 @@ steps:
         npm install
         npm run build
   - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA", "."]
+    args: [ "build", "-t", "gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA", "." ]
     # push container image
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA"]
+    args: [ "push", "gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA" ]
     # deploy container image to GKE
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
@@ -19,10 +19,8 @@ steps:
       - --image=gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA
       - --location=us-central1
       - --cluster=eigenphi-us-central-1
-  - name: "gcr.io/cloud-builders/gke-deploy"
-    args:
-      - run
-      - --filename=service.yaml
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args: [ 'apply', '-f', 'service.yaml' ]
 substitutions:
   _COMMIT_SHA: $SHORT_SHA
 
