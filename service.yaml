@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: helloworld-nodejs
+  namespace: prd
 spec:
   selector:
     app: helloworld-nodejs
