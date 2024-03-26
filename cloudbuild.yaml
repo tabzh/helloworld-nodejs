@@ -6,16 +6,16 @@ steps:
       - |
         npm install
         npm run build
-  - name: "gcr.io/cloud-builders/docker"
-    args: ["build", "-t", "gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA", "."]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'build', '-t', '${_IMAGE_NAME}', '.' ]
     # push container image
-  - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA"]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [ 'push', '${_IMAGE_NAME}' ]
     # deploy container image to GKE
-  - name: "gcr.io/cloud-builders/gke-deploy"
+  - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
       - run
-      - --image=gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA
+      - --image=${_IMAGE_NAME}
       - --location=us-central1
       - --cluster=eigenphi-us-central-1
       - --filename=deployment.yaml
@@ -25,8 +25,6 @@ steps:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
       - 'CLOUDSDK_CONTAINER_CLUSTER=eigenphi-us-central-1'
 substitutions:
-  _COMMIT_SHA: $SHORT_SHA
-
+  _IMAGE_NAME: 'gcr.io/arbitragescan/helloworld-nodejs:${SHORT_SHA}'
 options:
-  env:
-    - 'COMMIT_SHA=$COMMIT_SHA'
+  dynamicSubstitutions: true
