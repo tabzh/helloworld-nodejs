@@ -19,6 +19,10 @@ steps:
       - --image=gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA
       - --location=us-central1
       - --cluster=eigenphi-us-central-1
+  - name: "gcr.io/cloud-builders/gke-deploy"
+    args:
+      - run
+      - --filename=service.yaml
 substitutions:
   _COMMIT_SHA: $SHORT_SHA
 
