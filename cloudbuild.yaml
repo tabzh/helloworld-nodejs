@@ -19,10 +19,10 @@ steps:
   - name: 'gcr.io/cloud-builders/gke-deploy'
     args:
       - run
+      - --filename=deployment.yaml
       - --image=${_IMAGE_NAME}
       - --location=us-central1
       - --cluster=eigenphi-us-central-1
-      - --filename=deployment.yaml
   - name: 'gcr.io/cloud-builders/kubectl'
     args: [ 'apply', '-f', 'service.yaml' ]
     env:
