@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: my-deployment
+  name: helloworld-nodejs
   namespace: prd
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: my-app
+      app: helloworld-nodejs
   template:
     metadata:
       labels:
-        app: my-app
+        app: helloworld-nodejs
     spec:
       containers:
-        - name: my-container
+        - name: helloworld-nodejs
           image: gcr.io/arbitragescan/fake-app
           ports:
             - containerPort: 8080

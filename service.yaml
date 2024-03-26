@@ -4,7 +4,7 @@ metadata:
   name: helloworld-nodejs
 spec:
   selector:
-    app: my-app
+    app: helloworld-nodejs
   ports:
     - protocol: TCP
       port: 80
