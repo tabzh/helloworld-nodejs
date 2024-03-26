@@ -1,7 +1,16 @@
-# Key File description
+# EigenPhi Cloudbuild Project
 
-- Dockerfile 
-- cloudbuild.yaml
+## 前言
+
+通过
+
+## 必备文件及说明 
+
+- deployment.yaml* 
+- cloudbuild.yaml*
+- Dockerfile*
+- serice.yaml*
+- 
 
 
 ```

@@ -1,3 +1,7 @@
+options:
+  dynamicSubstitutions: true
+substitutions:
+  _IMAGE_NAME: 'gcr.io/arbitragescan/helloworld-nodejs:${SHORT_SHA}'
 steps:
   - name: 'node:14'
     entrypoint: 'bash'
@@ -24,7 +28,4 @@ steps:
     env:
       - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
       - 'CLOUDSDK_CONTAINER_CLUSTER=eigenphi-us-central-1'
-substitutions:
-  _IMAGE_NAME: 'gcr.io/arbitragescan/helloworld-nodejs:${SHORT_SHA}'
-options:
-  dynamicSubstitutions: true
+
