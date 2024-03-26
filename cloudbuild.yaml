@@ -14,11 +14,10 @@ steps:
     # deploy container image to GKE
   - name: "gcr.io/cloud-builders/gke-deploy"
     args:
-      - run
-      - '-filename=deployment.yaml'
       - '-image=gcr.io/arbitragescan/helloworld-nodejs:$SHORT_SHA'
       - '-location=us-central1'
       - '-cluster=eigenphi-us-central-1'
+      - '-filename=deployment.yaml'
   - name: 'gcr.io/cloud-builders/kubectl'
     args: [ 'apply', '-f', 'service.yaml' ]
     env:
