@@ -18,3 +18,19 @@ spec:
           image: gcr.io/arbitragescan/fake-app
           ports:
             - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /liveness_check
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 30
+            failureThreshold: 6
+            successThreshold: 1
+          readinessProbe:
+            httpGet:
+              path: /readiness_check
+              port: 8080
+            initialDelaySeconds: 120
+            periodSeconds: 10
+            failureThreshold: 2
+            successThreshold: 1
