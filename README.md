@@ -1,4 +1,4 @@
-# 项目名称
+# 通过Github Repo 触发 Cloudbuild Trigger 完成 GKE 部署 
 
 ## 0. 概览
 
@@ -253,4 +253,45 @@ gcloud components install cloud-build-local
 ```shell
 cloud-build-local --config=cloudbuild.yaml --dryrun=true .
 ```
+
+## 4. 可观测性及内部服务访问方式
+
+### 不具备kubectl权限
+
+构建日志：[Cloud Build 管理面板](https://console.cloud.google.com/cloud-build/builds)
+
+```text
+1. 通过 Cloud Build 面板, 从History中选择构建历史可以看到完整的构建步骤
+```
+
+容器日志及指标监控：[GKE Workload 管理面板](https://console.cloud.google.com/kubernetes/workload/overview)
+
+```text
+1. 选择指定应用名称Workload
+2. 在选项卡中选择 LOGS 进行日志查看
+3. 在选项卡中选择 OBSERVABILITY 查看CPU 内存等指标监控情况 
+```
+内网服务访问: [Serice 管理面板](https://console.cloud.google.com/kubernetes/discovery)
+```text
+1. 在service面板中选择目前已经定义的service
+2. 最下面部分点击  [PORT FORWARDING] 此时开启 cloudwatch 
+3. 直接敲击回车进行转发
+4. 转发完成后通过访问提供地址进行授权完成后即可访问
+```
+
+
+### 具备kubectl权限（参考1.4 进行配置）：
+
+容器日志：
+
+```text
+1. $kubectl get pod
+2. $kubectl logs -f SOMEPOD 
+```
+内网服务访问: 
+```text
+1. $kubectl proxy
+2. 浏览器访问http://localhost:8001/api/v1/namespaces/[NAMESPACE]/services/[SERVICE_NAME]:[PORT_NAME]/proxy/
+```
+ 
 
