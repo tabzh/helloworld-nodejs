@@ -1,0 +1,39 @@
+# IDE - IntelliJ
+.idea/
+
+# macOS 文件系统
+.DS_Store
+
+# Node modules
+node_modules/
+
+# 日志文件
+npm-debug.log
+yarn-error.log
+
+# 生产环境配置文件
+.env.production
+
+# 打包目录
+/dist
+
+# 依赖缓存
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+
+# 锁文件
+yarn.lock
+package-lock.json
+
+# 编译输出
+/build
+/coverage
+
+# 临时文件
+*.tmp
+*.temp
+
+# 其他不需要版本控制的文件或目录
+

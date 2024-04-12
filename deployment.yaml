@@ -34,3 +34,6 @@ spec:
             periodSeconds: 10
             failureThreshold: 2
             successThreshold: 1
+          env:
+            - name: ENV
+              value: ${_ENV_VAR}
