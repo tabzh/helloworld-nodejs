@@ -1,6 +1,5 @@
 substitutions:
   _IMAGE_NAME: 'gcr.io/arbitragescan/helloworld-nodejs:${SHORT_SHA}'
-  _ENV_VAR: 'test'
 steps:
   - name: 'node:14'
     entrypoint: 'bash'
@@ -22,7 +21,6 @@ steps:
       - --image=${_IMAGE_NAME}
       - --location=us-central1
       - --cluster=eigenphi-us-central-1
-      - --substitutions=_ENV_VAR=prd
   - name: 'gcr.io/cloud-builders/kubectl'
     args: [ 'apply', '-f', 'service.yaml' ]
     env:
