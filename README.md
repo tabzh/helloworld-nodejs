@@ -240,8 +240,16 @@ steps: # Cloud Build的步骤列表
       - 'CLOUDSDK_CONTAINER_CLUSTER=eigenphi-us-central-1' # 设置环境变量，指定容器集群
 
 ```
+#### 2. 创建触发器 创建触发器
+1. 访问所有的triggers 列表 https://console.cloud.google.com/cloud-build/triggers 
+2. 选择对应的Region 默认选择 us-west1
+3. 创建触发器 Create Trigger 
+4. Name 按照应用名走，Region选择us-west1， event推荐push 同 branch 然后source 中1st 2nd无区别对于当前我们的github用法中
+5. branch中填写对应的正则表达式即可
+6. 指定cloudbuild yaml文件的位置
+7. 最终完成创建后，就会按照cloudbuild中的步骤进行构建  部署
 
-#### 2. 验证方式 (通过Dry run并不会真正的创建资源，这里需要安装 cloud-build-local )
+#### 3. 验证方式 (通过Dry run并不会真正的创建资源，这里需要安装 cloud-build-local )
 
 ```shell
 *** 安装 cloud-build-local ***
@@ -255,6 +263,21 @@ cloud-build-local --config=cloudbuild.yaml --dryrun=true .
 ```
 
 ## 4. 可观测性及内部服务访问方式
+
+### 服务暴露
+
+公网暴露：
+
+默认我们采用两种方式进行服务暴露
+
+1. 通过IAP授权页面进行访问 默认地址为 https://service-name.prd.eigenphi.io
+2. 其他需要直接暴露公网不通过IAP的可以联系 @tab 进行ingress添加，即可直接暴露
+
+
+内网暴露：
+
+1. 用户参考下面不被kubectl和具备kubectl的两种访问内网服务的方式
+2. 同集群应用通过Service name即可完成访问 即 访问http://service-name, 跨命名空间可以使用 http://service-name.namespace.svc.cluster.local
 
 ### 不具备kubectl权限
 
@@ -271,12 +294,20 @@ cloud-build-local --config=cloudbuild.yaml --dryrun=true .
 2. 在选项卡中选择 LOGS 进行日志查看
 3. 在选项卡中选择 OBSERVABILITY 查看CPU 内存等指标监控情况 
 ```
-内网服务访问: [Serice 管理面板](https://console.cloud.google.com/kubernetes/discovery)
+内网服务访问: [Service 管理面板](https://console.cloud.google.com/kubernetes/discovery)
 ```text
 1. 在service面板中选择目前已经定义的service
 2. 最下面部分点击  [PORT FORWARDING] 此时开启 cloudwatch 
 3. 直接敲击回车进行转发
 4. 转发完成后通过访问提供地址进行授权完成后即可访问
+```
+
+POD EXEC bash权限 [Workload 管理面板](https://console.cloud.google.com/kubernetes/pod/us-central1/eigenphi-us-central-1/prd)
+```text
+1. 从workload面板中点击「DEPLOYMENT」名称
+2. 从 DEPLYOYMENT详情的下半部分 可以看到「MANAGED POD」 中选择想要进行命令行访问的POD并点击
+3. 在POD详情页面上半部分点击KUBECTL中的「EXEC」按键选择容器即可完成cloudshell的初始化
+4. 将命令的后半部分中「ls」变更为 bash 或 sh 在 exec后添加 「-it」 进行交互式选项
 ```
 
 
@@ -294,4 +325,3 @@ cloud-build-local --config=cloudbuild.yaml --dryrun=true .
 2. 浏览器访问http://localhost:8001/api/v1/namespaces/[NAMESPACE]/services/[SERVICE_NAME]:[PORT_NAME]/proxy/
 ```
  
-
