@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: helloworld-nodejs
-          image: gcr.io/arbitragescan/fake-app:openresty5
+          image: gcr.io/arbitragescan/fake-app:openresty6
           ports:
             - containerPort: 8080
           env:
