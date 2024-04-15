@@ -324,4 +324,16 @@ POD EXEC bash权限 [Workload 管理面板](https://console.cloud.google.com/kub
 1. $kubectl proxy
 2. 浏览器访问http://localhost:8001/api/v1/namespaces/[NAMESPACE]/services/[SERVICE_NAME]:[PORT_NAME]/proxy/
 ```
- 
+
+## 5. 私钥存储
+
+目前使用service account有两种方式 json文件或 workload 默认绑定（推荐）
+1. JSON文件形式，任何secret key都可以通过k8s的secret进行存储，调用的方式有两种 (1) 文件mount到某一目录下 (2) 环境变量获取 
+但是都需要在deployment中定义，优点是文件相对灵活，缺点是需要应用层显示引入
+2. （推荐）workload 绑定是通过 deployment 指定对应的service account 这里的service account 需要在iam中创建，并赋予权限，同时需要联系 @tab
+进行绑定，绑定分三部分，第一需要创建serviceaccount 资源（k8s）第二需要进行绑定 第三需要进行注释才能正常使用。 但是优点是使用的过程中
+应用层无感，认证是通过工作节点自己完成授权认证的。
+
+其他形式的私钥存储例如使用Secret manager等方式需要额外引入sdk，或json文件置于git仓库中，相对风险较高，由于历史中始终包含相应的key，
+因此不推荐使用，如果有其他方案欢迎补充建议
+
