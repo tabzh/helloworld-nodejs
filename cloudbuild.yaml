@@ -24,6 +24,7 @@ steps:
   - name: 'gcr.io/cloud-builders/kubectl'
     args: [ 'apply', '-f', 'service.yaml' ]
     env:
-      - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=eigenphi-us-central-1'
+      - 'CLOUDSDK_COMPUTE_ZONE=us-west1'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=eigenphi-us-west1-cluster-1'
+
 
