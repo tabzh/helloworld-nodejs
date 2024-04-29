@@ -19,12 +19,9 @@ steps:
       - run
       - --filename=deployment.yaml
       - --image=${_IMAGE_NAME}
-      - --location=us-central1
-      - --cluster=eigenphi-us-central-1
+      - --location=us-west1
+      - --cluster=eigenphi-us-west1-cluster-1
   - name: 'gcr.io/cloud-builders/kubectl'
     args: [ 'apply', '-f', 'service.yaml' ]
-    env:
-      - 'CLOUDSDK_COMPUTE_ZONE=us-west1'
-      - 'CLOUDSDK_CONTAINER_CLUSTER=eigenphi-us-west1-cluster-1'
 
 
