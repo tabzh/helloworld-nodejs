@@ -1,6 +1,6 @@
 steps:
-  # Step to check commit message and set START_FROM variable
-  - name: 'alpine'
+  # Step to clone the repository and check commit message
+  - name: 'gcr.io/cloud-builders/git'
     entrypoint: 'sh'
     args:
       - '-c'
@@ -8,7 +8,7 @@ steps:
         COMMIT_MESSAGE=$(git log -1 --pretty=%B)
         echo "Commit message: $$COMMIT_MESSAGE"
         if echo "$$COMMIT_MESSAGE" | grep -q 'startfrom:'; then
-          STEP_NAME=$(echo "$$COMMIT_MESSAGE" | sed -n 's/.*startfrom: \([^ ]*\).*/\1/p')
+          STEP_NAME=$$(echo "$$COMMIT_MESSAGE" | sed -n 's/.*startfrom: \([^ ]*\).*/\1/p')
           echo "START_FROM=$$STEP_NAME" > /workspace/env_vars.txt
         else
           echo "START_FROM=none" > /workspace/env_vars.txt
@@ -16,12 +16,17 @@ steps:
 
   # Load the START_FROM variable
   - name: 'alpine'
+    id: 'load_env_vars'
     entrypoint: 'sh'
     args:
       - '-c'
       - |
-        source /workspace/env_vars.txt
-        echo "START_FROM is $$START_FROM"
+        if [ -f /workspace/env_vars.txt ]; then
+          source /workspace/env_vars.txt
+          echo "START_FROM is $$START_FROM"
+        else
+          echo "START_FROM=none" > /workspace/env_vars.txt
+        fi
 
   # Conditionally run npm install and build
   - name: 'node:14'
@@ -29,7 +34,6 @@ steps:
     args:
       - '-c'
       - |
-        source /workspace/env_vars.txt
         ./scripts/step_runner.sh npm_install npm install && npm run build
 
   # Conditionally build the Docker image
@@ -38,8 +42,7 @@ steps:
     args:
       - '-c'
       - |
-        source /workspace/env_vars.txt
-        ./scripts/step_runner.sh docker_build docker build -t '${_IMAGE_NAME}' .
+        ./scripts/step_runner.sh docker_build docker build -t 'gcr.io/$$PROJECT_ID/example-image:$$COMMIT_SHA' .
 
   # Conditionally push the Docker image
   - name: 'gcr.io/cloud-builders/docker'
@@ -47,8 +50,7 @@ steps:
     args:
       - '-c'
       - |
-        source /workspace/env_vars.txt
-        ./scripts/step_runner.sh docker_push docker push '${_IMAGE_NAME}'
+        ./scripts/step_runner.sh docker_push docker push 'gcr.io/$$PROJECT_ID/example-image:$$COMMIT_SHA'
 
   # Always run GKE deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -56,8 +58,7 @@ steps:
     args:
       - '-c'
       - |
-        source /workspace/env_vars.txt
-        ./scripts/step_runner.sh gke_deploy gke-deploy run --filename=deployment.yaml --image=${_IMAGE_NAME} --location=us-west1 --cluster=eigenphi-us-west1-cluster-1
+        ./scripts/step_runner.sh gke_deploy gke-deploy run --filename=deployment.yaml --image=gcr.io/$$PROJECT_ID/example-image:$$COMMIT_SHA --location=us-west1 --cluster=eigenphi-us-west1-cluster-1
 
   # Always apply the Kubernetes service configuration
   - name: 'gcr.io/cloud-builders/kubectl'
@@ -65,5 +66,4 @@ steps:
     args:
       - '-c'
       - |
-        source /workspace/env_vars.txt
         ./scripts/step_runner.sh kubectl_apply kubectl apply -f service.yaml
