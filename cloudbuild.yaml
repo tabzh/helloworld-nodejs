@@ -1,27 +1,71 @@
 substitutions:
   _IMAGE_NAME: 'gcr.io/arbitragescan/helloworld-nodejs:${SHORT_SHA}'
+  _START_FROM: 'none'
+
 steps:
-  - name: 'node:14'
-    entrypoint: 'bash'
+  # Step to check commit message and set START_FROM variable
+  - name: 'alpine'
+    entrypoint: 'sh'
     args:
       - '-c'
       - |
-        npm install
-        npm run build
-  - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build', '-t', '${_IMAGE_NAME}', '.' ]
-    # push container image
-  - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'push', '${_IMAGE_NAME}' ]
-    # deploy container image to GKE
-  - name: 'gcr.io/cloud-builders/gke-deploy'
+        COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+        echo "Commit message: $COMMIT_MESSAGE"
+        if echo "$COMMIT_MESSAGE" | grep -q 'startfrom:'; then
+          STEP_NAME=$(echo "$COMMIT_MESSAGE" | sed -n 's/.*startfrom: \([^ ]*\).*/\1/p')
+          echo "START_FROM=$STEP_NAME" > /workspace/env_vars.txt
+        else
+          echo "START_FROM=none" > /workspace/env_vars.txt
+        fi
+
+  # Load the START_FROM variable
+  - name: 'alpine'
+    entrypoint: 'sh'
     args:
-      - run
-      - --filename=deployment.yaml
-      - --image=${_IMAGE_NAME}
-      - --location=us-west1
-      - --cluster=eigenphi-us-west1-cluster-1
+      - '-c'
+      - 'source /workspace/env_vars.txt && echo $START_FROM > /workspace/START_FROM'
+
+  # Conditionally run npm install and build
+  - name: 'node:14'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        source /workspace/env_vars.txt
+        ./scripts/step_runner.sh npm_install npm install && npm run build
+
+  # Conditionally build the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        source /workspace/env_vars.txt
+        ./scripts/step_runner.sh docker_build docker build -t '${_IMAGE_NAME}' .
+
+  # Conditionally push the Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        source /workspace/env_vars.txt
+        ./scripts/step_runner.sh docker_push docker push '${_IMAGE_NAME}'
+
+  # Always run GKE deploy
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        source /workspace/env_vars.txt
+        ./scripts/step_runner.sh gke_deploy gke-deploy run --filename=deployment.yaml --image=${_IMAGE_NAME} --location=us-west1 --cluster=eigenphi-us-west1-cluster-1
+
+  # Always apply the Kubernetes service configuration
   - name: 'gcr.io/cloud-builders/kubectl'
-    args: [ 'apply', '-f', 'service.yaml' ]
-
-
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        source /workspace/env_vars.txt
+        ./scripts/step_runner.sh kubectl_apply kubectl apply -f service.yaml
