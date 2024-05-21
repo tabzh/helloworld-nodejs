@@ -34,7 +34,7 @@ steps:
     args:
       - '-c'
       - |
-        ./scripts/step_runner.sh npm_install npm install && npm run build
+        source /workspace/env_vars.txt ./scripts/step_runner.sh npm_install npm install && npm run build
 
   # Conditionally build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
@@ -42,7 +42,7 @@ steps:
     args:
       - '-c'
       - |
-        ./scripts/step_runner.sh docker_build docker build -t 'gcr.io/$$PROJECT_ID/example-image:$$COMMIT_SHA' .
+        source /workspace/env_vars.txt ./scripts/step_runner.sh docker_build docker build -t 'gcr.io/$$PROJECT_ID/example-image:$$COMMIT_SHA' .
 
   # Conditionally push the Docker image
   - name: 'gcr.io/cloud-builders/docker'
@@ -50,7 +50,7 @@ steps:
     args:
       - '-c'
       - |
-        ./scripts/step_runner.sh docker_push docker push 'gcr.io/$$PROJECT_ID/example-image:$$COMMIT_SHA'
+        source /workspace/env_vars.txt ./scripts/step_runner.sh docker_push docker push 'gcr.io/$$PROJECT_ID/example-image:$$COMMIT_SHA'
 
   # Always run GKE deploy
   - name: 'gcr.io/cloud-builders/gke-deploy'
@@ -58,7 +58,7 @@ steps:
     args:
       - '-c'
       - |
-        ./scripts/step_runner.sh gke_deploy gke-deploy run --filename=deployment.yaml --image=gcr.io/$$PROJECT_ID/example-image:$$COMMIT_SHA --location=us-west1 --cluster=eigenphi-us-west1-cluster-1
+        source /workspace/env_vars.txt ./scripts/step_runner.sh gke_deploy gke-deploy run --filename=deployment.yaml --image=gcr.io/$$PROJECT_ID/example-image:$$COMMIT_SHA --location=us-west1 --cluster=eigenphi-us-west1-cluster-1
 
   # Always apply the Kubernetes service configuration
   - name: 'gcr.io/cloud-builders/kubectl'
@@ -66,4 +66,4 @@ steps:
     args:
       - '-c'
       - |
-        ./scripts/step_runner.sh kubectl_apply kubectl apply -f service.yaml
+        source /workspace/env_vars.txt ./scripts/step_runner.sh kubectl_apply kubectl apply -f service.yaml
