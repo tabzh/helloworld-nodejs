@@ -1,7 +1,3 @@
-substitutions:
-  _IMAGE_NAME: 'gcr.io/arbitragescan/helloworld-nodejs:${SHORT_SHA}'
-  _START_FROM: 'none'
-
 steps:
   # Step to check commit message and set START_FROM variable
   - name: 'alpine'
@@ -23,7 +19,9 @@ steps:
     entrypoint: 'sh'
     args:
       - '-c'
-      - 'source /workspace/env_vars.txt && echo $START_FROM > /workspace/START_FROM'
+      - |
+        source /workspace/env_vars.txt
+        echo "START_FROM is $START_FROM"
 
   # Conditionally run npm install and build
   - name: 'node:14'
