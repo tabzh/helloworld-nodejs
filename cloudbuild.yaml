@@ -1,5 +1,5 @@
 steps:
-  # Step to clone the repository and check commit message
+  # Step to clone the repository and check commit messag
   - name: 'gcr.io/cloud-builders/git'
     entrypoint: 'sh'
     args:
