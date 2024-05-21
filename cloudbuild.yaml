@@ -6,10 +6,10 @@ steps:
       - '-c'
       - |
         COMMIT_MESSAGE=$(git log -1 --pretty=%B)
-        echo "Commit message: $COMMIT_MESSAGE"
-        if echo "$COMMIT_MESSAGE" | grep -q 'startfrom:'; then
-          STEP_NAME=$(echo "$COMMIT_MESSAGE" | sed -n 's/.*startfrom: \([^ ]*\).*/\1/p')
-          echo "START_FROM=$STEP_NAME" > /workspace/env_vars.txt
+        echo "Commit message: $$COMMIT_MESSAGE"
+        if echo "$$COMMIT_MESSAGE" | grep -q 'startfrom:'; then
+          STEP_NAME=$(echo "$$COMMIT_MESSAGE" | sed -n 's/.*startfrom: \([^ ]*\).*/\1/p')
+          echo "START_FROM=$$STEP_NAME" > /workspace/env_vars.txt
         else
           echo "START_FROM=none" > /workspace/env_vars.txt
         fi
@@ -21,7 +21,7 @@ steps:
       - '-c'
       - |
         source /workspace/env_vars.txt
-        echo "START_FROM is $START_FROM"
+        echo "START_FROM is $$START_FROM"
 
   # Conditionally run npm install and build
   - name: 'node:14'
