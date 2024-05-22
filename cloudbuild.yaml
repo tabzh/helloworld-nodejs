@@ -60,7 +60,7 @@ steps:
     args:
       - '-c'
       - |
-        ./scripts/step_runner.sh gke_deploy gke-deploy run --filename=deployment.yaml --image=gcr.io/$$PROJECT_ID/example-image:$$COMMIT_SHA --location=us-west1 --cluster=eigenphi-us-west1-cluster-1
+        ./scripts/step_runner.sh gke_deploy gke-deploy run --filename=deployment.yaml --image='${_IMAGE_NAME}' --location=us-west1 --cluster=eigenphi-us-west1-cluster-1
 
   # Always apply the Kubernetes service configuration
   - name: 'gcr.io/cloud-builders/kubectl'
