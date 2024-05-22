@@ -1,4 +1,3 @@
-# scripts/step_runner.sh
 #!/bin/bash
 
 STEP_NAME=$1
